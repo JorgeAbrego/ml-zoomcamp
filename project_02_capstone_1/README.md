@@ -160,27 +160,27 @@ If everything is ok, you should see image in ECR repository, for example:
 
 Go to the Lambda service in the AWS Management Console and choose 'Create function'.
 
-![Alt text](images/lambda_main.PNG)
+![Alt text](images/lambda_main.png)
 
 Select the 'Container image' option, provide a name for your Lambda function and choose the Docker image you uploaded to ECR as the container image.
 
-![Alt text](images/lambda_create.PNG)
+![Alt text](images/lambda_create.png)
 
 If creation is successful, you should see a message like this:
 
-![Alt text](images/lambda_create_success.PNG)
+![Alt text](images/lambda_create_success.png)
 
 Once the function is created, you can configure a test event (URL image is the same than local test file):
 
-![Alt text](images/lambda_testing.PNG)
+![Alt text](images/lambda_testing.png)
 
 Invoke the Lambda function with the test event to ensure it's working as expected:
 
-![Alt text](images/lambda_testing_success.PNG)
+![Alt text](images/lambda_testing_success.png)
 
 If there is an error, configure any additional settings such as memory, timeout, and execution role:
 
-![Alt text](images/lambda_increase_timeout.PNG)
+![Alt text](images/lambda_increase_timeout.png)
 
 ### AWS API Gateway
 
