@@ -1,6 +1,6 @@
 # Vegetable Classification Using Deep Convolutional Neural Networks
 
-![Dataset Cover](images/dataset-cover.png)
+![Dataset Cover](images/dataset_cover.png)
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -103,6 +103,10 @@ The full dataset is available at [Kaggle](https://www.kaggle.com/datasets/misrak
    $ pip install -r requirements.txt
    ```
 
+7. **Download dataset**
+
+   The dataset should be downloaded and copied into a folder called `data`, it could be found in [Kaggle](https://www.kaggle.com/datasets/misrakahmed/vegetable-image-dataset/).
+
 ## Deployment
 
 ### Local Test (Docker Container)
@@ -123,13 +127,112 @@ $ docker run -it --name Vegetable-Classifer -p 8080:8080 vegetable-classifier:v1
 
 ### Pulling image to AWS ECR
 
+Create a new repository in Amazon ECR via the AWS Management Console.
+
+```bash
+$ aws ecr create-repository --repository-name <repository-name>
+```
+Don't forget to copy `repositoryUri` value to be able to continue.
+
+Authenticate your Docker client to the Amazon ECR registry you just created.
+
+```bash
+$ aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <account-id>.dkr.ecr.<region>.amazonaws.com
+```
+
+Tag your Docker image with the Amazon ECR repository URI.
+
+```bash
+$ docker tag <local-image>:<tag> <account-id>.dkr.ecr.<region>.amazonaws.com/<repository-name>:<tag>
+```
+
+Push the Docker image to your ECR repository.
+
+```bash
+$ docker push <account-id>.dkr.ecr.<region>.amazonaws.com/<repository-name>:<tag>
+```
+
+If everything is ok, you should see image in ECR repository, for example:
+
+![ECR Repo](images/ecr_repository.png)
 
 ### AWS Lambda
 
+Go to the Lambda service in the AWS Management Console and choose 'Create function'.
+
+![Alt text](images/lambda_main.PNG)
+
+Select the 'Container image' option, provide a name for your Lambda function and choose the Docker image you uploaded to ECR as the container image.
+
+![Alt text](images/lambda_create.PNG)
+
+If creation is successful, you should see a message like this:
+
+![Alt text](images/lambda_create_success.PNG)
+
+Once the function is created, you can configure a test event (URL image is the same than local test file):
+
+![Alt text](images/lambda_testing.PNG)
+
+Invoke the Lambda function with the test event to ensure it's working as expected:
+
+![Alt text](images/lambda_testing_success.PNG)
+
+If there is an error, configure any additional settings such as memory, timeout, and execution role:
+
+![Alt text](images/lambda_increase_timeout.PNG)
 
 ### AWS API Gateway
 
+Navigate to API Gateway service, then click on Create, if this is your first API you will be reditected to nex step `Choose an API type`:
 
+![Alt text](images/apigw_main.png)
+
+Choose `REST API` and then click on Build:
+
+![Alt text](images/apigw_choose.png)
+
+Select `New API`, enter the API name and a short description (this is optional), then click on `Create API`:
+
+![Alt text](images/apigw_create.png)
+
+Once API is created, you should set a route, a new resource must be set, click on `Create resource`
+
+![Alt text](images/apigw_resources.png)
+
+Set the resource name to `predict`, then click on `Create resource`:
+
+![Alt text](images/apigw_resource_create.png)
+
+When resource is created, a method should be set, click on `Create method`:
+
+![Alt text](images/apigw_method.png)
+
+When configuring method, select type `POST`, `Lambda function` in `Integration type` and look for Lambda created before; then click on `Create method`:
+
+![Alt text](images/apigw_method_config.png)
+
+Once method is created, you can test it; just click on `Test` and put JSON with image URL in `Request body`, then click on `Test`:
+
+![Alt text](images/apigw_method_test.png)
+
+If everything is OK, you should see this:
+
+![Alt text](images/apigw_method_test_success.png)
+
+Now API is ready for deployment, or `Resources` click on `Deploy API`:
+
+![Alt text](images/apigw_deploy.png)
+
+A stage should be created, select `New stage` and fill `test` on stage name:
+
+![Alt text](images/apigw_deploy_config.png)
+
+When stage is created, `Inveoke URL` will be provided:
+
+![Alt text](images/apigw_stage.png)
+
+Now API is fully deployed and accesible for everybody. 
 
 ## Usage
 
@@ -153,21 +256,21 @@ Example:
 
 ![Local Test](images/file_test_local.png)
 
-*Cloud Test*
+*AWS Lambda Test*
 
 For testing the cloud-based API, the steps are similar:
 
 1. Open your terminal or command prompt.
-2. Navigate to the directory containing the test-cloud.py script.
+2. Navigate to the directory containing the test-lambda.py script.
 3. Execute the script by running:
 
    ```bash
-   python test-cloud.py
+   python test-lambda.py
    ```
 
 Example:
 
-![Local Test](images/file_test_cloud.png)
+![Local Test](images/file_test_lambda.png)
 
 ### Using API Client
 
@@ -203,8 +306,10 @@ For local testing, just fill the local address in URL box
 
 ![Local Test](images/insomnia_test_local.png)
 
-*Cloud/Remote Test*
+*AWS Lambda Test*
 
-For cloud/remote testing, just fill API remote address in URL box
+For AWS Lambda testing, just fill API remote address in URL box
 
-![Cloud Test](images/insomnia_test_cloud.png)
+![Cloud Test](images/insomnia_test_lambda.png)
+
+**Note**: If you want to try this API, it will be able until december 31, 2023. URL is: `https://7wep8lbmz1.execute-api.us-east-1.amazonaws.com/test/predict`. After that date, API will be deleted.
