@@ -96,8 +96,45 @@ The full dataset is available at [Kaggle](https://www.kaggle.com/datasets/jp7974
 
 ## Deployment
 
+### Local Test (Docker Container)
+
+Execute the following command to build the Docker image. This will create an image with the tag `vegetables-classifier:v1` (you can pick another name if you want).
+
+```bash
+$ docker build -t sentiment-classifier:v1 .
+```
+
+This process might take several minutes as Docker needs to download the base images and build the necessary layers for your application.
+
+Run the following command to start a container based on the image you just created. This command also maps port `8080` of the container to port `8080` on your local machine.
+
+```bash
+$ docker run -it --name Sentiment-Classifer -p 8080:8080 sentiment-classifier:v1
+```
+
+### Pulling image to AWS ECR
+
 TODO
 
 ## Usage
 
-TODO
+### Using Test Python Files
+
+For testing this API using the provided Python scripts: test-cloud.py for cloud-based tests and test-local.py for local tests.
+
+*Local Test*
+
+To test the API locally, follow these steps:
+
+1. Open your terminal or command prompt.
+2. Navigate to the directory containing the test-local.py script.
+3. Execute the script by running:
+
+   ```bash
+   python test_local.py
+   ```
+
+Example:
+
+![Local Test](images/file_test_local.png)
+
