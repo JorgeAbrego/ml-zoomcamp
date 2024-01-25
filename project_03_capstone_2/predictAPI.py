@@ -5,8 +5,8 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 from nltk.corpus import stopwords
-#import numpy as np
-#import os
+
+nltk.download('stopwords')
 
 # Process text functions
 def clean_text(text):

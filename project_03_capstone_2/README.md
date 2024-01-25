@@ -1,5 +1,3 @@
-https://www.kaggle.com/datasets/jp797498e/twitter-entity-sentiment-analysis?select=twitter_training.csv
-
 # X (Twitter) Sentiment Classification
 
 ![Dataset Cover](images/dataset_cover.jpg)
@@ -106,23 +104,65 @@ $ docker build -t sentiment-classifier:v1 .
 
 This process might take several minutes as Docker needs to download the base images and build the necessary layers for your application.
 
-Run the following command to start a container based on the image you just created. This command also maps port `8080` of the container to port `8080` on your local machine.
+Run the following command to start a container based on the image you just created. This command also maps port `9696` of the container to port `9696` on your local machine.
 
 ```bash
-$ docker run -it --name Sentiment-Classifer -p 8080:8080 sentiment-classifier:v1
+$ docker run -it --name Sentiment-Classifer -p 9696:9696 sentiment-classifier:v1
 ```
 
-### Pulling image to AWS ECR
+### Pushing image to Docker Hub
 
-TODO
+First, you should access to Docker Hub, and look for `Create repository`:
+
+![Alt text](images/dockerhub_create_repo.png)
+
+Set a repository name and check it as `Public`, if you want, write a short description of your image:
+
+![Alt text](images/dockerhub_config_repo.png)
+
+Once repository is created, you will see its info:
+
+![Alt text](images/dockerhub_info_repo.png)
+
+Now, it's time to push image; let's back to console an login to Docker Hub:
+
+```bash
+$ docker login
+```
+
+![Alt text](images/dockerhub_login.png)
+
+Once logged in, you should tag your image to new repository name:
+
+```bash
+$ docker tag sentiment-classifier:<tag> <account-name>/sentiment-classifier:<tag>
+```
+
+![Alt text](images/dockerhub_tag_image.png)
+
+Then , let's push it to Docker Hub:
+
+```bash
+$ docker push <account-name>/sentiment-classifier:<tag>
+```
+
+![Alt text](images/dockerhub_pushing.png)
+
+If everything is ok, you should see the image in Docker Hub repository, for example:
+
+![Alt text](images/dockerhub_push_success.png)
+
+And, in Docker Hub you will see the new tag, you can create more tags, for example, if you use a create an image with a different version of python.
+
+![Alt text](images/dockerhub_tags_repo.png)
+
+Now, image is ready to be deployed in any kind of service.
 
 ## Usage
 
 ### Using Test Python Files
 
 For testing this API using the provided Python scripts: test-cloud.py for cloud-based tests and test-local.py for local tests.
-
-*Local Test*
 
 To test the API locally, follow these steps:
 
@@ -131,10 +171,42 @@ To test the API locally, follow these steps:
 3. Execute the script by running:
 
    ```bash
-   python test_local.py
+   python test-concept.py
    ```
 
 Example:
 
 ![Local Test](images/file_test_local.png)
+
+### Using API Client
+
+There are several clients available for testing API applications, and one of the notable ones is `Insomnia`. It's a powerful and flexible tool designed for interacting with APIs. It enables developers to set up, send, and analyze HTTP requests and responses with ease. If you don't have Insomnia on your machine, it's easy to get started by downloading it from [here](https://insomnia.rest/download).
+
+**Step 1: Navigating the Initial Menu of Insomnia**
+
+Upon opening Insomnia for the first time, you'll be presented with the initial menu where you can either create a new request or open an existing workspace. To get started, click on `New HTTP Request`
+
+![Insomnia Main](images/insomnia_main.png)
+
+**Step 2: Configuring the Request**
+
+1. **URL**: Enter the address of the API endpoint you wish to communicate with in the URL bar
+
+2. **Method**: Choose the appropriate method for your request (for example, POST) from the dropdown menu next to the URL bar.
+
+3. **JSON Data**: If you are executing a method such as POST or PUT that requires a message body, select 'Body' beneath the URL bar. Then choose 'JSON' and enter or paste the JSON you wish to send in the request body.
+
+4. **Send request**: Clic on `Send` button to make the request to server.
+
+![Insomnia Configuration](images/insomnia_config.png)
+
+**Step 3: Example of Response**
+
+After you have configured your request and sent it, Insomnia will display the response in the same window.
+
+This is an example in local deployment:
+
+For local testing, just fill the local address in URL box
+
+![Local Test](images/insomnia_local_test.png)
 
